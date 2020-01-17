@@ -1,0 +1,5 @@
+name: 'axelerant'
+type: module
+description: 'Axelerant assignment'
+core: 8.x
+package: 'Custom'

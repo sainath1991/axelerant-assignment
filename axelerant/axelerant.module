@@ -1,0 +1,68 @@
+<?php
+
+/**
+ * @file
+ * Contains axelerant assignment related code.
+ */
+
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function axelerant_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the axelerant module.
+    case 'help.page.axelerant':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Axelerant assignment module.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function axelerant_form_system_site_information_settings_alter(Array &$form, FormStateInterface $form_state) {
+  $config = Drupal::config('system.site');
+  $form['site_api_key_details'] = [
+    '#type' => 'details',
+    '#title' => t('Site API key details'),
+    '#open' => TRUE,
+    '#weight' => -1,
+  ];
+  $form['site_api_key_details']['site_api_key'] = [
+    '#type' => 'textfield',
+    '#title' => t('Site API key'),
+    '#description' => t('Please add site API key.'),
+    '#default_value' => !empty($config->get('site_api_key')) ? $config->get('site_api_key') : t('No API Key yet'),
+  ];
+  $form['actions']['submit']['#submit'][] = 'siteapikey_submit';
+  // Change the button text to Update Configuration only if form submitted with
+  // the value.
+  if (!empty($config->get('site_api_key')) && ($config->get('site_api_key') !== 'No API Key yet')) {
+    $form['actions']['submit']['#value'] = t('Update Configuration');
+  }
+}
+
+/**
+ * Custom submit function.
+ *
+ * @param array $form
+ *   Form render array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Object of type FormStateInterface.
+ */
+function siteapikey_submit(array &$form, FormStateInterface $form_state) {
+  $config = Drupal::configFactory()->getEditable('system.site');
+  $apiKey = $form_state->getValue('site_api_key');
+  $siteApiKey = Html::escape($apiKey);
+  $config->set('site_api_key', $siteApiKey)
+    ->save();
+  Drupal::messenger()->addStatus(t('Site API Key has been saved with :siteapikey value', [':siteapikey' => $siteApiKey]));
+}

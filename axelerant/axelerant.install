@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Install and uninstall function for axelerant module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function axelerant_uninstall() {
+  // Clear the site api key values.
+  Drupal::configFactory()->getEditable('system.site')->clear('site_api_key')
+    ->save();
+}
