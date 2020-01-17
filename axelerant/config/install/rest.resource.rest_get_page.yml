@@ -1,0 +1,11 @@
+id: rest_get_page
+plugin_id: rest_get_page
+granularity: resource
+configuration:
+  methods:
+    - GET
+  formats:
+    - json
+  authentication:
+    - basic_auth
+    - cookie
