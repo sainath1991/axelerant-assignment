@@ -6,4 +6,5 @@ package: 'Custom'
 dependencies:
   - drupal:system  
   - drupal:rest
+  - drupal:basic_auth
 configure: system.site_information_settings

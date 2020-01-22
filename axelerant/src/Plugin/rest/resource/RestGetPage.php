@@ -97,8 +97,12 @@ class RestGetPage extends ResourceBase {
     $configuredApiKey = $config->get('site_api_key');
     // Get node object from node id.
     $node = $this->entityTypeManager->getStorage('node')->load($nodeid);
+    // Get the current user has permission view content.
+    $contentAccess = $node->access('view');
+    // Get node publish status.
+    $published = $node->isPublished();
     // Access denied if site Api Key is different or node type is not page.
-    if ($node->bundle() !== 'page' || $configuredApiKey !== $siteapikey) {
+    if ($node->bundle() !== 'page' || $configuredApiKey !== $siteapikey || !$contentAccess || !$published) {
       throw new AccessDeniedHttpException('Access denied');
     }
     return new ResourceResponse($node, 200);
